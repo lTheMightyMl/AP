@@ -14,23 +14,24 @@ public class P3 {
     static void dfs(Vertex currentVertex) {
         currentVertex.marked = true;
         currentMaxC = Long.min(currentMaxC, currentVertex.cost);
-        for(Vertex child : currentVertex.adjacencyList) {
-            if(!child.marked)
+        for (Vertex child : currentVertex.adjacencyList) {
+            if (!child.marked)
                 dfs(child);
         }
         return;
     }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int n = scanner.nextInt();
         int m = scanner.nextInt();
-        for(int i = 0;i < n;i++) {
+        for (int i = 0; i < n; i++) {
             int c = scanner.nextInt();
             Vertex newVertex = new Vertex();
             newVertex.cost = c;
             vertices.add(newVertex);
         }
-        for(int i = 0;i < m;i++) {
+        for (int i = 0; i < m; i++) {
             int currentVertexNumber = scanner.nextInt();
             int childNumber = scanner.nextInt();
             currentVertexNumber--;
@@ -41,9 +42,9 @@ public class P3 {
             child.adjacencyList.add(currentVertex);
         }
         long answer = 0;
-        for(int i = 0;i < n;i++) {
+        for (int i = 0; i < n; i++) {
             Vertex currentVertex = vertices.get(i);
-            if(!currentVertex.marked) {
+            if (!currentVertex.marked) {
                 currentMaxC = 1000 * 1000 * 1000 + 1;
                 dfs(currentVertex);
                 answer += currentMaxC;

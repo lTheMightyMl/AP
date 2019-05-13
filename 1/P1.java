@@ -7,34 +7,34 @@ public class P1 {
         int m = scanner.nextInt();
         int k = scanner.nextInt();
         int nCopy = n, max = 2 * n + m;
-        for(int i = m; i <= max; i += 2) {
-            String pattern = "";
-            for(int j = 0; j < nCopy; j++)
-                pattern += ' ';
-            for(int j = 0; j < i; j++)
-                pattern += '*';
-            for(int j = 0; j < nCopy; j++)
-                pattern += ' ';
-            for(int j = 0; j < k; j++)
+        for (int i = m; i <= max; i += 2) {
+            StringBuilder pattern = pattern(nCopy, i);
+            for (int j = 0; j < k; j++)
                 System.out.print(pattern);
             nCopy -= 1;
             System.out.println();
         }
         nCopy = 1;
         max -= 2;
-        for(int i = max; i >= m; i -= 2) {
-            String pattern = "";
-            for(int j = 0; j < nCopy; j++)
-                pattern += ' ';
-            for(int j = 0; j < i; j++)
-                pattern += '*';
-            for(int j = 0; j < nCopy; j++)
-                pattern += ' ';
-            for(int j = 0; j < k; j++)
+        for (int i = max; i >= m; i -= 2) {
+            StringBuilder pattern = pattern(nCopy, i);
+            for (int j = 0; j < k; j++)
                 System.out.print(pattern);
             nCopy += 1;
             System.out.println();
         }
-        return; 
+        scanner.close();
+        return;
+    }
+
+    static StringBuilder pattern(int whiteSpace, int asterisk) {
+        StringBuilder pattern = new StringBuilder();
+        for (int i = 0; i < whiteSpace; i++)
+            pattern.append(' ');
+        for (int i = 0; i < asterisk; i++)
+            pattern.append('*');
+        for (int i = 0; i < whiteSpace; i++)
+            pattern.append(' ');
+        return pattern;
     }
 }
