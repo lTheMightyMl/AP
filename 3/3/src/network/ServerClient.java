@@ -1,6 +1,9 @@
 package network;
 
 import interactor.Interactor;
+import network.client.MessageReceiver;
+import network.client.MessageSender;
+import network.server.Acceptor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,14 +30,14 @@ public class ServerClient {
             } finally {
                 if (serverSocket != null)
                     new Acceptor(serverSocket).start();
+                Interactor interactor = new Interactor();
+                Socket clientSocket = new Socket(HOST, PORT);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                sendUsername(in, out);
+                new MessageSender(out).start();
+                new MessageReceiver(in, interactor).start();
             }
-            Interactor interactor = new Interactor();
-            Socket clientSocket = new Socket(HOST, PORT);
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            sendUsername(in, out);
-            new MessageSender(out).start();
-            new MessageReceiver(in, interactor).start();
         } catch (Exception ignored) {
         }
     }

@@ -1,6 +1,7 @@
-package network;
+package network.client;
 
 import interactor.Interactor;
+import network.ServerClient;
 
 import java.io.BufferedReader;
 
@@ -14,9 +15,7 @@ public class MessageReceiver extends Thread {
     }
 
     private static boolean isAMessage(String command) {
-        if (command.charAt(command.length() - 1) == '$')
-            return true;
-        return false;
+        return command.charAt(command.length() - 1) == '$';
     }
 
     private static String getMessage(String message) {
@@ -31,7 +30,9 @@ public class MessageReceiver extends Thread {
                 if (isAMessage(response))
                     System.out.println(getMessage(response));
                 else
-                    interactor.act(response);
+                    if (!interactor.act(response)) {
+
+                    }
                 response = in.readLine();
             }
         } catch (Exception ignored) {
