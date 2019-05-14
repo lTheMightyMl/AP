@@ -7,11 +7,9 @@ import java.io.BufferedReader;
 
 public class MessageReceiver extends Thread {
     private BufferedReader in;
-    private Interactor interactor;
 
-    public MessageReceiver(BufferedReader in, Interactor interactor) {
+    public MessageReceiver(BufferedReader in) {
         this.in = in;
-        this.interactor = interactor;
     }
 
     private static boolean isAMessage(String command) {
@@ -30,9 +28,7 @@ public class MessageReceiver extends Thread {
                 if (isAMessage(response))
                     System.out.println(getMessage(response));
                 else
-                    if (!interactor.act(response)) {
-
-                    }
+                    System.out.println(response);
                 response = in.readLine();
             }
         } catch (Exception ignored) {

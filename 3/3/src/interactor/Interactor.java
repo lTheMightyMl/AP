@@ -26,6 +26,7 @@ public class Interactor {
     private static final String INVALID_COMMAND = "Invalid command";
     private static final String INVALID_PLAYERS = "Invalid Players";
     private static final String INVALID_NUMBER = "Invalid number";
+
     private Game currentGame = null;
     private State state = State.MAIN_MENU;
 
@@ -150,5 +151,9 @@ public class Interactor {
         String[] commandSplit = command.split(" ");
         state = State.IN_GAME;
         return new Game(commandSplit[2], commandSplit[3]);
+    }
+
+    public void reset() {
+        state = State.MAIN_MENU;
     }
 }

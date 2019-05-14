@@ -36,7 +36,7 @@ public class ServerClient {
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 sendUsername(in, out);
                 new MessageSender(out).start();
-                new MessageReceiver(in, interactor).start();
+                new MessageReceiver(in).start();
             }
         } catch (Exception ignored) {
         }
@@ -56,15 +56,5 @@ public class ServerClient {
         }
         if (response.equals(UNIQUE_USERNAME))
             System.out.println("Successfully logged into the network.");
-    }
-
-
-    private static void finish(Socket clientSocket, BufferedReader in, PrintWriter out) {
-        try {
-            in.close();
-            out.close();
-            clientSocket.close();
-        } catch (Exception ignored) {
-        }
     }
 }
