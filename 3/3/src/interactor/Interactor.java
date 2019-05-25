@@ -156,4 +156,34 @@ public class Interactor {
     public void reset() {
         state = State.MAIN_MENU;
     }
+
+    public boolean getIsInGame() {
+        return state == State.IN_GAME;
+    }
+
+    public boolean isMultiplayer() {
+        if (currentGame == null)
+            return false;
+        return currentGame.isMultiplayer();
+    }
+
+    public void setMultiplayer(boolean multiplayer) {
+        currentGame.setMultiplayer(multiplayer);
+    }
+
+    public String getOtherPlayer() {
+        return currentGame.getOtherPlayer();
+    }
+
+    public int getN() {
+        return Game.getN();
+    }
+
+    public int getM() {
+        return Game.getM();
+    }
+
+    public void setDimensions(int previousN, int previousM) {
+        Game.setDimensions(previousN, previousM);
+    }
 }

@@ -1,35 +1,26 @@
 package network.client;
 
-import interactor.Interactor;
 import network.ServerClient;
 
-import java.io.BufferedReader;
+import java.io.InputStream;
+import java.util.Scanner;
+import java.util.concurrent.BlockingDeque;
 
 public class MessageReceiver extends Thread {
-    private BufferedReader in;
+    private Scanner scanner;
+    private BlockingDeque<String> input;
 
-    public MessageReceiver(BufferedReader in) {
-        this.in = in;
-    }
-
-    private static boolean isAMessage(String command) {
-        return command.charAt(command.length() - 1) == '$';
-    }
-
-    private static String getMessage(String message) {
-        return message.substring(0, message.length() - 1);
+    public MessageReceiver(InputStream in, BlockingDeque<String> input) {
+        this.scanner = new Scanner(in);
+        this.input = input;
     }
 
     @Override
     public void run() {
         try {
-            String response = in.readLine();
-            while (response != null) {
-                if (isAMessage(response))
-                    System.out.println(getMessage(response));
-                else
-                    System.out.println(response);
-                response = in.readLine();
+            while (scanner.hasNextLine()) {
+                String response = scanner.nextLine();
+                input.add(response);
             }
         } catch (Exception ignored) {
         }

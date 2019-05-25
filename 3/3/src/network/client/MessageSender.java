@@ -1,25 +1,28 @@
 package network.client;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
+import java.util.concurrent.BlockingDeque;
 
 public class MessageSender extends Thread {
-    PrintWriter out;
-    BufferedReader scanner;
+    PrintStream out;
+    Scanner scanner;
+    BlockingDeque<String> output;
 
-    public MessageSender(PrintWriter out) {
-        scanner = new BufferedReader(new InputStreamReader(System.in));
-        this.out = out;
+    public MessageSender(OutputStream outputStream, BlockingDeque<String> output) {
+        scanner = new Scanner(System.in);
+        this.out = new PrintStream(outputStream, true);
+        this.output = output;
     }
 
     @Override
     public void run() {
         try {
-            String response = scanner.readLine();
-            while (response != null) {
-                out.println(response);
-                response = scanner.readLine();
+            while (scanner.hasNextLine()) {
+                String message = scanner.nextLine();
+                message = message.trim();
+                output.add(message);
             }
         } catch (Exception ignored) {
         }

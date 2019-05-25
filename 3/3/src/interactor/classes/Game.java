@@ -21,6 +21,8 @@ public class Game {
     private Player[] players = new Player[2];
     private ArrayList<Move> moves = new ArrayList<>();
 
+    private boolean multiplayer = false;
+
     public Game(String player1Name, String player2Name) {
         rows = n;
         columns = m;
@@ -66,6 +68,14 @@ public class Game {
 
     public static void stop(Game game) {
         gamesInProgress.remove(game);
+    }
+
+    public static int getN() {
+        return n;
+    }
+
+    public static int getM() {
+        return m;
     }
 
     private int determineWinner() {
@@ -116,8 +126,8 @@ public class Game {
 
     public void showTable() {
         for (char[] row : table) {
-            for (char cell : row)
-                System.out.print(cell + "|");
+            for (int i = 0; i < row.length - 1; i++)
+                System.out.print(row[i] + "|");
             System.out.println(row[columns - 1]);
         }
         System.out.println(players[playerTurn].getName());
@@ -164,5 +174,23 @@ public class Game {
     public void pause() {
         gamesInProgress.remove(this);
         gamesInProgress.add(this);
+    }
+
+    public boolean isMultiplayer() {
+        return multiplayer;
+    }
+
+    public void setMultiplayer(boolean multiplayer) {
+        this.multiplayer = multiplayer;
+    }
+
+    public String getOtherPlayer() {
+        return players[NUMBER_OF_PLAYERS - 1 - playerTurn].getName();
+    }
+
+    public Player getOtherPlayer(String username) {
+        if (players[playerTurn].getName().equals(username))
+            return players[NUMBER_OF_PLAYERS - 1 - playerTurn];
+        return players[playerTurn];
     }
 }

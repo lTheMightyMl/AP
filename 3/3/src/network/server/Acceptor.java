@@ -1,19 +1,15 @@
 package network.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Scanner;
+
+import static network.ServerClient.NON_UNIQUE_USERNAME;
+import static network.ServerClient.UNIQUE_USERNAME;
 
 public class Acceptor extends Thread {
-    private static final String NONUNIQUE_USERNAME = "NONUNIQUE_USERNAME";
-    private static final String UNIQUE_USERNAME = "UNIQUE_USERNAME";
-
-    private static final String PROMPT_USERNAME = "Enter your username";
-
     private static HashMap<String, ClientHandler> clientHandlers = new HashMap<>();
 
     private ServerSocket serverSocket;
@@ -26,37 +22,56 @@ public class Acceptor extends Thread {
         return clientHandlers.get(username);
     }
 
-    private static ClientHandler initiateClient(BufferedReader in, PrintWriter out, Socket clientSocket) throws IOException {
-        String username = getUsername(in, out);
-        ClientHandler clientHandler = new ClientHandler(clientSocket, username);
-        clientHandlers.put(username, clientHandler);
-        return clientHandler;
+    public static void removeClientHandler(ClientHandler clientHandler) {
+        clientHandlers.remove(clientHandler.getUsername(), clientHandler);
     }
-
-    private static String getUsername(BufferedReader in, PrintWriter out) throws IOException {
-        String username = in.readLine();
-        while (clientHandlers.containsKey(username)) {
-            out.println(NONUNIQUE_USERNAME);
-            username = in.readLine();
-        }
-        out.println(UNIQUE_USERNAME);
-        return username;
-    }
-
 
     @Override
     public void run() {
-        BufferedReader in;
-        PrintWriter out;
+        Scanner scanner;
+        PrintStream out;
         try {
             while (!interrupted()) {
                 Socket clientSocket = serverSocket.accept();
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                ClientHandler clientHandler = initiateClient(in, out, clientSocket);
-                clientHandler.start();
+                scanner = new Scanner(clientSocket.getInputStream());
+                out = new PrintStream(clientSocket.getOutputStream(), true);
+                new clientInitiator(scanner, out, clientSocket).start();
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    private static class clientInitiator extends Thread {
+        Scanner scanner;
+        PrintStream out;
+        Socket clientSocket;
+
+        public clientInitiator(Scanner scanner, PrintStream out, Socket clientSocket) {
+            this.scanner = scanner;
+            this.out = out;
+            this.clientSocket = clientSocket;
+        }
+
+        @Override
+        public void run() {
+            initiateClient().start();
+        }
+
+        private ClientHandler initiateClient() {
+            String username = getUsername(scanner, out);
+            ClientHandler clientHandler = new ClientHandler(clientSocket, username);
+            clientHandlers.put(username, clientHandler);
+            return clientHandler;
+        }
+
+        private String getUsername(Scanner scanner, PrintStream out) {
+            String username = scanner.nextLine();
+            while (clientHandlers.containsKey(username) || username.isBlank()) {
+                out.println(NON_UNIQUE_USERNAME);
+                username = scanner.nextLine();
+            }
+            out.println(UNIQUE_USERNAME);
+            return username;
         }
     }
 }
